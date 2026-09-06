@@ -291,3 +291,126 @@ export const ListPlansResponseItem = zod.object({
 export const ListPlansResponse = zod.array(ListPlansResponseItem)
 
 
+/**
+ * @summary Get goals, milestones, tasks, and progress
+ */
+export const GetExecutionOverviewResponse = zod.object({
+  "goals": zod.array(zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "detail": zod.string(),
+  "progress": zod.number().int(),
+  "status": zod.enum(['active', 'paused', 'complete'])
+})),
+  "milestones": zod.array(zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "detail": zod.string(),
+  "status": zod.enum(['next', 'current', 'complete'])
+})),
+  "tasks": zod.array(zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "priority": zod.enum(['high', 'medium', 'low']),
+  "due": zod.string(),
+  "complete": zod.boolean()
+})),
+  "habits": zod.array(zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "cadence": zod.string(),
+  "streak": zod.number().int()
+})),
+  "progress": zod.number().int()
+})
+
+
+/**
+ * @summary Get the research workspace overview
+ */
+export const GetResearchOverviewResponse = zod.object({
+  "question": zod.string(),
+  "stage": zod.enum(['question', 'gathering', 'comparing', 'synthesis']),
+  "sourceCount": zod.number().int(),
+  "liveStatus": zod.enum(['available', 'planned']),
+  "sources": zod.array(zod.object({
+  "id": zod.string(),
+  "title": zod.string(),
+  "type": zod.string(),
+  "status": zod.enum(['planned', 'saved', 'verified']),
+  "perspective": zod.string()
+})),
+  "notes": zod.array(zod.string())
+})
+
+
+/**
+ * @summary List knowledge and document items
+ */
+export const ListKnowledgeItemsResponseItem = zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "kind": zod.enum(['pdf', 'document', 'spreadsheet', 'image', 'text']),
+  "status": zod.enum(['ready', 'planned', 'processing']),
+  "detail": zod.string(),
+  "size": zod.string()
+})
+export const ListKnowledgeItemsResponse = zod.array(ListKnowledgeItemsResponseItem)
+
+
+/**
+ * @summary List permission-aware automations
+ */
+export const ListAutomationsResponseItem = zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "trigger": zod.string(),
+  "action": zod.string(),
+  "status": zod.enum(['enabled', 'paused', 'planned']),
+  "needsConfirmation": zod.boolean(),
+  "lastRun": zod.string()
+})
+export const ListAutomationsResponse = zod.array(ListAutomationsResponseItem)
+
+
+/**
+ * @summary List model providers and routing states
+ */
+export const ListModelsResponseItem = zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "models": zod.array(zod.string()),
+  "status": zod.enum(['active', 'planned', 'unavailable']),
+  "role": zod.string(),
+  "costState": zod.string()
+})
+export const ListModelsResponse = zod.array(ListModelsResponseItem)
+
+
+/**
+ * @summary Get decision support workspace overview
+ */
+export const GetDecisionOverviewResponse = zod.object({
+  "question": zod.string(),
+  "options": zod.array(zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "upside": zod.string(),
+  "risk": zod.string(),
+  "evidence": zod.string()
+})),
+  "dimensions": zod.array(zod.string()),
+  "uncertainty": zod.string()
+})
+
+
+/**
+ * @summary Get future B2B workspace capability overview
+ */
+export const GetBusinessOverviewResponse = zod.object({
+  "workspaceStatus": zod.enum(['planned', 'beta', 'available']),
+  "capabilities": zod.array(zod.string()),
+  "controls": zod.array(zod.string())
+})
+
+

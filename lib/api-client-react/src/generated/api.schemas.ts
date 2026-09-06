@@ -209,3 +209,208 @@ export interface SubscriptionPlan {
   highlighted: boolean;
 }
 
+export type GoalStatus = typeof GoalStatus[keyof typeof GoalStatus];
+
+
+export const GoalStatus = {
+  active: 'active',
+  paused: 'paused',
+  complete: 'complete',
+} as const;
+
+export interface Goal {
+  id: string;
+  title: string;
+  detail: string;
+  progress: number;
+  status: GoalStatus;
+}
+
+export type MilestoneStatus = typeof MilestoneStatus[keyof typeof MilestoneStatus];
+
+
+export const MilestoneStatus = {
+  next: 'next',
+  current: 'current',
+  complete: 'complete',
+} as const;
+
+export interface Milestone {
+  id: string;
+  title: string;
+  detail: string;
+  status: MilestoneStatus;
+}
+
+export type ExecutionTaskPriority = typeof ExecutionTaskPriority[keyof typeof ExecutionTaskPriority];
+
+
+export const ExecutionTaskPriority = {
+  high: 'high',
+  medium: 'medium',
+  low: 'low',
+} as const;
+
+export interface ExecutionTask {
+  id: string;
+  title: string;
+  priority: ExecutionTaskPriority;
+  due: string;
+  complete: boolean;
+}
+
+export interface Habit {
+  id: string;
+  title: string;
+  cadence: string;
+  streak: number;
+}
+
+export interface ExecutionOverview {
+  goals: Goal[];
+  milestones: Milestone[];
+  tasks: ExecutionTask[];
+  habits: Habit[];
+  progress: number;
+}
+
+export type ResearchOverviewStage = typeof ResearchOverviewStage[keyof typeof ResearchOverviewStage];
+
+
+export const ResearchOverviewStage = {
+  question: 'question',
+  gathering: 'gathering',
+  comparing: 'comparing',
+  synthesis: 'synthesis',
+} as const;
+
+export type ResearchOverviewLiveStatus = typeof ResearchOverviewLiveStatus[keyof typeof ResearchOverviewLiveStatus];
+
+
+export const ResearchOverviewLiveStatus = {
+  available: 'available',
+  planned: 'planned',
+} as const;
+
+export type ResearchSourceStatus = typeof ResearchSourceStatus[keyof typeof ResearchSourceStatus];
+
+
+export const ResearchSourceStatus = {
+  planned: 'planned',
+  saved: 'saved',
+  verified: 'verified',
+} as const;
+
+export interface ResearchSource {
+  id: string;
+  title: string;
+  type: string;
+  status: ResearchSourceStatus;
+  perspective: string;
+}
+
+export interface ResearchOverview {
+  question: string;
+  stage: ResearchOverviewStage;
+  sourceCount: number;
+  liveStatus: ResearchOverviewLiveStatus;
+  sources: ResearchSource[];
+  notes: string[];
+}
+
+export type KnowledgeItemKind = typeof KnowledgeItemKind[keyof typeof KnowledgeItemKind];
+
+
+export const KnowledgeItemKind = {
+  pdf: 'pdf',
+  document: 'document',
+  spreadsheet: 'spreadsheet',
+  image: 'image',
+  text: 'text',
+} as const;
+
+export type KnowledgeItemStatus = typeof KnowledgeItemStatus[keyof typeof KnowledgeItemStatus];
+
+
+export const KnowledgeItemStatus = {
+  ready: 'ready',
+  planned: 'planned',
+  processing: 'processing',
+} as const;
+
+export interface KnowledgeItem {
+  id: string;
+  name: string;
+  kind: KnowledgeItemKind;
+  status: KnowledgeItemStatus;
+  detail: string;
+  size: string;
+}
+
+export type AutomationStatus = typeof AutomationStatus[keyof typeof AutomationStatus];
+
+
+export const AutomationStatus = {
+  enabled: 'enabled',
+  paused: 'paused',
+  planned: 'planned',
+} as const;
+
+export interface Automation {
+  id: string;
+  name: string;
+  trigger: string;
+  action: string;
+  status: AutomationStatus;
+  needsConfirmation: boolean;
+  lastRun: string;
+}
+
+export type ModelProviderStatus = typeof ModelProviderStatus[keyof typeof ModelProviderStatus];
+
+
+export const ModelProviderStatus = {
+  active: 'active',
+  planned: 'planned',
+  unavailable: 'unavailable',
+} as const;
+
+export interface ModelProvider {
+  id: string;
+  name: string;
+  models: string[];
+  status: ModelProviderStatus;
+  role: string;
+  costState: string;
+}
+
+export interface DecisionOption {
+  id: string;
+  name: string;
+  upside: string;
+  risk: string;
+  evidence: string;
+}
+
+export interface DecisionOverview {
+  question: string;
+  options: DecisionOption[];
+  dimensions: string[];
+  uncertainty: string;
+}
+
+export type BusinessOverviewWorkspaceStatus = typeof BusinessOverviewWorkspaceStatus[keyof typeof BusinessOverviewWorkspaceStatus];
+
+
+export const BusinessOverviewWorkspaceStatus = {
+  planned: 'planned',
+  beta: 'beta',
+  available: 'available',
+} as const;
+
+export interface BusinessOverview {
+  workspaceStatus: BusinessOverviewWorkspaceStatus;
+  capabilities: string[];
+  controls: string[];
+}
+

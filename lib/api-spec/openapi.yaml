@@ -22,6 +22,18 @@ tags:
     description: Localization and personal preferences
   - name: billing
     description: Product subscription plans and current selection
+  - name: execution
+    description: Goals, plans, tasks, and progress
+  - name: knowledge
+    description: Files, documents, and data understanding
+  - name: research
+    description: Research plans, sources, and evidence
+  - name: automation
+    description: Permission-aware workflows and automation
+  - name: models
+    description: Provider-agnostic model routing and usage
+  - name: business
+    description: Future team and company workspace capabilities
 paths:
   /healthz:
     get:
@@ -260,6 +272,96 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/SubscriptionPlan"
+  /execution/overview:
+    get:
+      operationId: getExecutionOverview
+      tags: [execution]
+      summary: Get goals, milestones, tasks, and progress
+      responses:
+        "200":
+          description: Execution overview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecutionOverview"
+  /research/overview:
+    get:
+      operationId: getResearchOverview
+      tags: [research]
+      summary: Get the research workspace overview
+      responses:
+        "200":
+          description: Research overview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResearchOverview"
+  /knowledge/items:
+    get:
+      operationId: listKnowledgeItems
+      tags: [knowledge]
+      summary: List knowledge and document items
+      responses:
+        "200":
+          description: Knowledge items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/KnowledgeItem"
+  /automations:
+    get:
+      operationId: listAutomations
+      tags: [automation]
+      summary: List permission-aware automations
+      responses:
+        "200":
+          description: Automations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Automation"
+  /models:
+    get:
+      operationId: listModels
+      tags: [models]
+      summary: List model providers and routing states
+      responses:
+        "200":
+          description: Model routing catalog
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ModelProvider"
+  /decisions/overview:
+    get:
+      operationId: getDecisionOverview
+      tags: [research]
+      summary: Get decision support workspace overview
+      responses:
+        "200":
+          description: Decision overview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DecisionOverview"
+  /business/overview:
+    get:
+      operationId: getBusinessOverview
+      tags: [business]
+      summary: Get future B2B workspace capability overview
+      responses:
+        "200":
+          description: B2B capability overview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessOverview"
 components:
   parameters:
     ConversationId:
@@ -444,4 +546,143 @@ components:
           type: array
           items: { type: string }
         highlighted: { type: boolean }
+    ExecutionOverview:
+      type: object
+      required: [goals, milestones, tasks, habits, progress]
+      properties:
+        goals:
+          type: array
+          items: { $ref: "#/components/schemas/Goal" }
+        milestones:
+          type: array
+          items: { $ref: "#/components/schemas/Milestone" }
+        tasks:
+          type: array
+          items: { $ref: "#/components/schemas/ExecutionTask" }
+        habits:
+          type: array
+          items: { $ref: "#/components/schemas/Habit" }
+        progress: { type: integer }
+    Goal:
+      type: object
+      required: [id, title, detail, progress, status]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        detail: { type: string }
+        progress: { type: integer }
+        status: { type: string, enum: [active, paused, complete] }
+    Milestone:
+      type: object
+      required: [id, title, detail, status]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        detail: { type: string }
+        status: { type: string, enum: [next, current, complete] }
+    ExecutionTask:
+      type: object
+      required: [id, title, priority, due, complete]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        priority: { type: string, enum: [high, medium, low] }
+        due: { type: string }
+        complete: { type: boolean }
+    Habit:
+      type: object
+      required: [id, title, cadence, streak]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        cadence: { type: string }
+        streak: { type: integer }
+    ResearchOverview:
+      type: object
+      required: [question, stage, sourceCount, sources, notes, liveStatus]
+      properties:
+        question: { type: string }
+        stage: { type: string, enum: [question, gathering, comparing, synthesis] }
+        sourceCount: { type: integer }
+        liveStatus: { type: string, enum: [available, planned] }
+        sources:
+          type: array
+          items: { $ref: "#/components/schemas/ResearchSource" }
+        notes:
+          type: array
+          items: { type: string }
+    ResearchSource:
+      type: object
+      required: [id, title, type, status, perspective]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        type: { type: string }
+        status: { type: string, enum: [planned, saved, verified] }
+        perspective: { type: string }
+    KnowledgeItem:
+      type: object
+      required: [id, name, kind, status, detail, size]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        kind: { type: string, enum: [pdf, document, spreadsheet, image, text] }
+        status: { type: string, enum: [ready, planned, processing] }
+        detail: { type: string }
+        size: { type: string }
+    Automation:
+      type: object
+      required: [id, name, trigger, action, status, needsConfirmation, lastRun]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        trigger: { type: string }
+        action: { type: string }
+        status: { type: string, enum: [enabled, paused, planned] }
+        needsConfirmation: { type: boolean }
+        lastRun: { type: string }
+    ModelProvider:
+      type: object
+      required: [id, name, models, status, role, costState]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        models:
+          type: array
+          items: { type: string }
+        status: { type: string, enum: [active, planned, unavailable] }
+        role: { type: string }
+        costState: { type: string }
+    DecisionOverview:
+      type: object
+      required: [question, options, dimensions, uncertainty]
+      properties:
+        question: { type: string }
+        options:
+          type: array
+          items: { $ref: "#/components/schemas/DecisionOption" }
+        dimensions:
+          type: array
+          items: { type: string }
+        uncertainty: { type: string }
+    DecisionOption:
+      type: object
+      required: [id, name, upside, risk, evidence]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        upside: { type: string }
+        risk: { type: string }
+        evidence: { type: string }
+    BusinessOverview:
+      type: object
+      required: [workspaceStatus, capabilities, controls]
+      properties:
+        workspaceStatus: { type: string, enum: [planned, beta, available] }
+        capabilities:
+          type: array
+          items: { type: string }
+        controls:
+          type: array
+          items: { type: string }
 

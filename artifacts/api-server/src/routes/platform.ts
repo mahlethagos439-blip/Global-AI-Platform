@@ -9,10 +9,17 @@ import {
   GetConversationResponse,
   GetDashboardResponse,
   GetPreferencesResponse,
+  GetBusinessOverviewResponse,
+  GetDecisionOverviewResponse,
+  GetExecutionOverviewResponse,
+  GetResearchOverviewResponse,
+  ListAutomationsResponse,
   ListAgentsResponse,
   ListConversationsResponse,
   ListIntegrationCapabilitiesResponse,
   ListMemoryResponse,
+  ListKnowledgeItemsResponse,
+  ListModelsResponse,
   ListPlansResponse,
   ListProjectsResponse,
   SendMessageBody,
@@ -221,6 +228,86 @@ const plans = [
   },
 ];
 
+const executionOverview = {
+  goals: [
+    { id: "goal-1", title: "Build the first B2C product", detail: "Ship a useful foundation before widening the surface.", progress: 42, status: "active" as const },
+    { id: "goal-2", title: "Create a sustainable learning rhythm", detail: "Make progress visible without making life feel like a dashboard.", progress: 24, status: "active" as const },
+  ],
+  milestones: [
+    { id: "mile-1", title: "Clarify the first customer promise", detail: "Turn the company vision into one memorable outcome.", status: "current" as const },
+    { id: "mile-2", title: "Invite the first 10 testers", detail: "Learn from real problems before widening the build.", status: "next" as const },
+    { id: "mile-3", title: "Measure a completed outcome", detail: "Close the loop from conversation to result.", status: "next" as const },
+  ],
+  tasks: [
+    { id: "task-1", title: "Write the first B2C promise", priority: "high" as const, due: "Today", complete: false },
+    { id: "task-2", title: "Map the first onboarding thread", priority: "medium" as const, due: "Tomorrow", complete: false },
+    { id: "task-3", title: "Review agent entry points", priority: "low" as const, due: "This week", complete: true },
+  ],
+  habits: [
+    { id: "habit-1", title: "Return to the one next step", cadence: "Daily", streak: 6 },
+    { id: "habit-2", title: "Capture one useful insight", cadence: "Weekdays", streak: 3 },
+  ],
+  progress: 38,
+};
+
+const researchOverview = {
+  question: "What makes an AI platform feel like a partner in outcomes, not just a place to ask questions?",
+  stage: "comparing" as const,
+  sourceCount: 0,
+  liveStatus: "planned" as const,
+  sources: [
+    { id: "source-1", title: "First source will appear here", type: "Web research", status: "planned" as const, perspective: "Live provider connection required" },
+    { id: "source-2", title: "Bring your own document", type: "Uploaded file", status: "planned" as const, perspective: "Upload architecture is ready" },
+  ],
+  notes: [
+    "Separate fact, interpretation, and opinion in every synthesis.",
+    "Show uncertainty when evidence is thin or sources disagree.",
+    "Save sources and notes to a project so research compounds.",
+  ],
+};
+
+const knowledgeItems = [
+  { id: "knowledge-1", name: "Product vision brief", kind: "document" as const, status: "ready" as const, detail: "Text understanding ready for future extraction", size: "24 KB" },
+  { id: "knowledge-2", name: "Customer discovery template", kind: "spreadsheet" as const, status: "planned" as const, detail: "Spreadsheet analysis after storage is connected", size: "—" },
+  { id: "knowledge-3", name: "Research report.pdf", kind: "pdf" as const, status: "planned" as const, detail: "Summaries, questions, comparison, and citations", size: "—" },
+];
+
+const automations = [
+  { id: "automation-1", name: "Weekly progress reflection", trigger: "Every Friday at 17:00", action: "Summarize project movement and ask for the next step", status: "planned" as const, needsConfirmation: false, lastRun: "Not connected" },
+  { id: "automation-2", name: "Research digest", trigger: "When a source is saved", action: "Compare evidence and flag uncertainty", status: "planned" as const, needsConfirmation: false, lastRun: "Not connected" },
+  { id: "automation-3", name: "Send a prepared email", trigger: "When you approve a draft", action: "Send through a connected email provider", status: "paused" as const, needsConfirmation: true, lastRun: "Never — permission required" },
+];
+
+const models = [
+  { id: "orchestrator", name: "Global Orchestrator", models: ["Task router", "Multi-agent coordinator"], status: "active" as const, role: "Chooses the right lens, model, and tools", costState: "Preview routing only" },
+  { id: "reasoning", name: "Reasoning providers", models: ["Deep reasoning", "Fast reasoning", "Long context"], status: "planned" as const, role: "Complex analysis and planning", costState: "Provider connection required" },
+  { id: "multimodal", name: "Multimodal providers", models: ["Image understanding", "Document understanding", "Voice"], status: "planned" as const, role: "Interpret text, files, images, and audio", costState: "Provider connection required" },
+  { id: "fallback", name: "Fallback layer", models: ["Provider fallback", "Safe retry"], status: "planned" as const, role: "Keep work moving when a provider is unavailable", costState: "Usage tracking planned" },
+];
+
+const decisionOverview = {
+  question: "Which first customer promise should guide the next product experiment?",
+  options: [
+    { id: "decision-1", name: "One clear outcome", upside: "Memorable and measurable", risk: "Narrower initial surface", evidence: "Strong alignment with the core principle" },
+    { id: "decision-2", name: "Many capabilities at once", upside: "Broad appeal", risk: "Harder to explain and learn from", evidence: "Useful long-term, harder to test first" },
+    { id: "decision-3", name: "Agent marketplace", upside: "Signals platform ambition", risk: "Adds complexity before trust is earned", evidence: "Better after the first repeated outcome" },
+  ],
+  dimensions: ["User value", "Learning speed", "Trust", "Effort to test"],
+  uncertainty: "This is a structured thinking aid, not a verdict. The evidence will improve after real users try the product.",
+};
+
+const businessOverview = {
+  workspaceStatus: "planned" as const,
+  capabilities: [
+    "Team workspaces and company assistants",
+    "Shared company knowledge bases",
+    "Customer support, sales, research, and marketing agents",
+    "Workflow automation with approvals",
+    "Usage analytics and outcome reporting",
+  ],
+  controls: ["Roles and permissions", "Audit logs", "Admin controls", "Data boundaries", "Business integrations"],
+};
+
 function inferAgent(content: string) {
   const normalized = content.toLowerCase();
   if (normalized.includes("translate") || normalized.includes("language")) return agents.find((agent) => agent.id === "language")!;
@@ -381,5 +468,13 @@ router.patch("/preferences", (req, res) => {
 });
 
 router.get("/plans", (_req, res) => res.json(ListPlansResponse.parse(plans)));
+
+router.get("/execution/overview", (_req, res) => res.json(GetExecutionOverviewResponse.parse(executionOverview)));
+router.get("/research/overview", (_req, res) => res.json(GetResearchOverviewResponse.parse(researchOverview)));
+router.get("/knowledge/items", (_req, res) => res.json(ListKnowledgeItemsResponse.parse(knowledgeItems)));
+router.get("/automations", (_req, res) => res.json(ListAutomationsResponse.parse(automations)));
+router.get("/models", (_req, res) => res.json(ListModelsResponse.parse(models)));
+router.get("/decisions/overview", (_req, res) => res.json(GetDecisionOverviewResponse.parse(decisionOverview)));
+router.get("/business/overview", (_req, res) => res.json(GetBusinessOverviewResponse.parse(businessOverview)));
 
 export default router;
