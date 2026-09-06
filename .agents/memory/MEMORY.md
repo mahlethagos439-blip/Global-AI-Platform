@@ -1,0 +1,1 @@
+- [Honest provider states](honest-provider-states.md) — unavailable AI, integration, and billing capabilities must remain explicit rather than being faked.

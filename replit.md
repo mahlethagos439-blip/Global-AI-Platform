@@ -1,6 +1,6 @@
-# [Project name]
+# Global AI Platform
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A mobile-first personal AI operating system that helps people move from problems to understanding, plans, execution, and measurable outcomes.
 
 ## Run & Operate
 
@@ -22,23 +22,34 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/global-ai-platform/src/` — responsive web app, auth routes, dashboard, chat, agents, projects, memory, preferences, plans, and trust/help surfaces
+- `artifacts/api-server/src/routes/platform.ts` — first platform API surface with seed data and honest orchestrator preview behavior
+- `lib/api-spec/openapi.yaml` — source of truth for platform contracts and generated hooks
+- `lib/api-client-react/src/generated/` — generated React Query client
+- `lib/api-zod/src/generated/` — generated request/response validation
+- `artifacts/global-ai-platform/src/index.css` — visual system and responsive styling
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- The product is organized around a problem-to-outcome loop, with 15 specialized agents behind an orchestrator rather than a single chat persona.
+- Live AI and external integrations are explicit capability states. The UI never claims a provider is connected when it is not.
+- The first backend surface is contract-first and provider-agnostic, so model selection, citations, permissions, and integrations can expand without changing the frontend information architecture.
+- Clerk is the authentication foundation; browser requests use same-origin session cookies rather than custom token plumbing.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+The first B2C foundation includes a public entry experience, account flows, a personal dashboard, AI conversation workspace, all 15 problem-area agents, personal projects, user-controlled memory, localization preferences, plan comparison with mock checkout state, integration capability catalog, and trust/help guidance. It is designed to extend into B2B workspaces, company knowledge, permissions, audit logs, analytics, and business integrations.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Preserve long-term product capabilities even when a live API or integration is not connected.
+- Do not represent mock subscription flows or orchestrator previews as real billing or live model execution.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- API data in `platform.ts` is currently seeded/in-memory so the product can be demonstrated without requiring a live provider; persistence and user scoping are follow-up work.
+- If the OpenAPI contract changes, regenerate both the React client and Zod validators before consuming new hooks.
+- The web app expects the managed artifact workflow to supply `PORT` and `BASE_PATH`.
 
 ## Pointers
 

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 44" fill="none">
+  <rect width="44" height="44" rx="12" fill="#F1C46B"/>
+  <path d="M22 12.5c1.7 4.8 4.7 7.8 9.5 9.5-4.8 1.7-7.8 4.7-9.5 9.5-1.7-4.8-4.7-7.8-9.5-9.5 4.8-1.7 7.8-4.7 9.5-9.5Z" fill="#17465A"/>
+  <text x="55" y="30" fill="#20363D" font-family="Georgia, serif" font-size="24">global.</text>
+</svg>
