@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Global AI Platform"
+description = "A mobile-first AI platform that helps people move from problems to understanding, plans, execution, and measurable outcomes across learning, work, creativity, and personal life."
+version = "1.0.0"
+id = "artifacts/global-ai-platform"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23949
+
+[services.development]
+run = "pnpm --filter @workspace/global-ai-platform run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/global-ai-platform", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/global-ai-platform/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23949"
+BASE_PATH = "/"

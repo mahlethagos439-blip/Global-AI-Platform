@@ -10,6 +10,18 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: platform
+    description: Platform overview and capability discovery
+  - name: conversations
+    description: AI conversations and messages
+  - name: projects
+    description: Personal projects and workspaces
+  - name: memory
+    description: User-controlled AI memory
+  - name: preferences
+    description: Localization and personal preferences
+  - name: billing
+    description: Product subscription plans and current selection
 paths:
   /healthz:
     get:
@@ -24,7 +36,244 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /dashboard:
+    get:
+      operationId: getDashboard
+      tags: [platform]
+      summary: Get the user's platform dashboard
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dashboard"
+  /agents:
+    get:
+      operationId: listAgents
+      tags: [platform]
+      summary: List specialized AI agents
+      responses:
+        "200":
+          description: Available agents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Agent"
+  /integrations/catalog:
+    get:
+      operationId: listIntegrationCapabilities
+      tags: [platform]
+      summary: List integration capabilities and connection states
+      responses:
+        "200":
+          description: Integration capability catalog
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/IntegrationCapability"
+  /conversations:
+    get:
+      operationId: listConversations
+      tags: [conversations]
+      summary: List saved conversations
+      responses:
+        "200":
+          description: Saved conversations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Conversation"
+    post:
+      operationId: createConversation
+      tags: [conversations]
+      summary: Start a new conversation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConversationInput"
+      responses:
+        "201":
+          description: Conversation created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Conversation"
+  /conversations/{conversationId}:
+    get:
+      operationId: getConversation
+      tags: [conversations]
+      summary: Get a conversation and its messages
+      parameters:
+        - $ref: "#/components/parameters/ConversationId"
+      responses:
+        "200":
+          description: Conversation detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConversationDetail"
+        "404":
+          description: Conversation not found
+  /conversations/{conversationId}/messages:
+    post:
+      operationId: sendMessage
+      tags: [conversations]
+      summary: Send a message through the orchestrator
+      parameters:
+        - $ref: "#/components/parameters/ConversationId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MessageInput"
+      responses:
+        "200":
+          description: User and assistant messages
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+  /projects:
+    get:
+      operationId: listProjects
+      tags: [projects]
+      summary: List personal projects
+      responses:
+        "200":
+          description: Projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Project"
+    post:
+      operationId: createProject
+      tags: [projects]
+      summary: Create a personal project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectInput"
+      responses:
+        "201":
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+  /memory:
+    get:
+      operationId: listMemory
+      tags: [memory]
+      summary: List user-controlled memories
+      responses:
+        "200":
+          description: Memories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Memory"
+  /memory/{memoryId}:
+    patch:
+      operationId: updateMemory
+      tags: [memory]
+      summary: Update a memory consent or value
+      parameters:
+        - $ref: "#/components/parameters/MemoryId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MemoryUpdate"
+      responses:
+        "200":
+          description: Updated memory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Memory"
+    delete:
+      operationId: deleteMemory
+      tags: [memory]
+      summary: Delete a memory
+      parameters:
+        - $ref: "#/components/parameters/MemoryId"
+      responses:
+        "204":
+          description: Memory deleted
+  /preferences:
+    get:
+      operationId: getPreferences
+      tags: [preferences]
+      summary: Get language and regional preferences
+      responses:
+        "200":
+          description: Preferences
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Preferences"
+    patch:
+      operationId: updatePreferences
+      tags: [preferences]
+      summary: Update language and regional preferences
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PreferencesUpdate"
+      responses:
+        "200":
+          description: Updated preferences
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Preferences"
+  /plans:
+    get:
+      operationId: listPlans
+      tags: [billing]
+      summary: List product subscription plans
+      responses:
+        "200":
+          description: Product plans
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SubscriptionPlan"
 components:
+  parameters:
+    ConversationId:
+      name: conversationId
+      in: path
+      required: true
+      schema:
+        type: string
+    MemoryId:
+      name: memoryId
+      in: path
+      required: true
+      schema:
+        type: string
   schemas:
     HealthStatus:
       type: object
@@ -33,4 +282,166 @@ components:
           type: string
       required:
         - status
+    Dashboard:
+      type: object
+      required: [greeting, activeProjects, conversationsThisWeek, outcomeProgress, recentActivity]
+      properties:
+        greeting: { type: string }
+        activeProjects: { type: integer }
+        conversationsThisWeek: { type: integer }
+        outcomeProgress: { type: integer }
+        recentActivity:
+          type: array
+          items: { $ref: "#/components/schemas/Activity" }
+    Activity:
+      type: object
+      required: [id, label, detail, timestamp, tone]
+      properties:
+        id: { type: string }
+        label: { type: string }
+        detail: { type: string }
+        timestamp: { type: string }
+        tone: { type: string, enum: [violet, teal, amber, blue] }
+    Agent:
+      type: object
+      required: [id, name, shortName, description, category, accent, recommended]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        shortName: { type: string }
+        description: { type: string }
+        category: { type: string }
+        accent: { type: string }
+        recommended: { type: boolean }
+    IntegrationCapability:
+      type: object
+      required: [id, name, description, status, icon]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: string }
+        status: { type: string, enum: [available, planned, connected] }
+        icon: { type: string }
+    Conversation:
+      type: object
+      required: [id, title, preview, agentId, updatedAt, messageCount]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        preview: { type: string }
+        agentId: { type: string }
+        updatedAt: { type: string }
+        messageCount: { type: integer }
+    ConversationInput:
+      type: object
+      required: [title, agentId]
+      properties:
+        title: { type: string }
+        agentId: { type: string }
+    ConversationDetail:
+      type: object
+      required: [conversation, messages]
+      properties:
+        conversation: { $ref: "#/components/schemas/Conversation" }
+        messages:
+          type: array
+          items: { $ref: "#/components/schemas/Message" }
+    Message:
+      type: object
+      required: [id, role, content, createdAt, confidence]
+      properties:
+        id: { type: string }
+        role: { type: string, enum: [user, assistant, system] }
+        content: { type: string }
+        createdAt: { type: string }
+        confidence: { type: string, enum: [high, medium, low] }
+        citations:
+          type: array
+          items: { type: string }
+    MessageInput:
+      type: object
+      required: [content]
+      properties:
+        content: { type: string, minLength: 1 }
+        attachmentName: { type: ["string", "null"] }
+    MessageResponse:
+      type: object
+      required: [userMessage, assistantMessage, route]
+      properties:
+        userMessage: { $ref: "#/components/schemas/Message" }
+        assistantMessage: { $ref: "#/components/schemas/Message" }
+        route: { $ref: "#/components/schemas/OrchestrationRoute" }
+    OrchestrationRoute:
+      type: object
+      required: [agentId, agentName, model, reason, needsPermission]
+      properties:
+        agentId: { type: string }
+        agentName: { type: string }
+        model: { type: string }
+        reason: { type: string }
+        needsPermission: { type: boolean }
+    Project:
+      type: object
+      required: [id, name, description, progress, status, updatedAt, agentIds]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: string }
+        progress: { type: integer }
+        status: { type: string, enum: [active, paused, complete] }
+        updatedAt: { type: string }
+        agentIds:
+          type: array
+          items: { type: string }
+    ProjectInput:
+      type: object
+      required: [name, description]
+      properties:
+        name: { type: string }
+        description: { type: string }
+    Memory:
+      type: object
+      required: [id, label, value, source, enabled, updatedAt]
+      properties:
+        id: { type: string }
+        label: { type: string }
+        value: { type: string }
+        source: { type: string }
+        enabled: { type: boolean }
+        updatedAt: { type: string }
+    MemoryUpdate:
+      type: object
+      properties:
+        enabled: { type: boolean }
+        value: { type: string }
+    Preferences:
+      type: object
+      required: [language, region, timezone, dateFormat, unitSystem]
+      properties:
+        language: { type: string }
+        region: { type: string }
+        timezone: { type: string }
+        dateFormat: { type: string }
+        unitSystem: { type: string, enum: [metric, imperial] }
+    PreferencesUpdate:
+      type: object
+      properties:
+        language: { type: string }
+        region: { type: string }
+        timezone: { type: string }
+        dateFormat: { type: string }
+        unitSystem: { type: string, enum: [metric, imperial] }
+    SubscriptionPlan:
+      type: object
+      required: [id, name, monthlyPrice, annualPrice, description, features, highlighted]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        monthlyPrice: { type: number }
+        annualPrice: { type: number }
+        description: { type: string }
+        features:
+          type: array
+          items: { type: string }
+        highlighted: { type: boolean }
 
